@@ -1,0 +1,88 @@
+/* src/pages/Main.module.css */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    padding: 20px;
+}
+
+section {
+    margin: 20px 0;
+}
+
+.img {
+    margin-top: 2rem;
+    width: 8rem;
+    height: 8rem;
+}
+
+.loginContainer,
+.registerContainer {
+    width: 30rem;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    /* background-color: #f7f7f7; */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    text-align: center;
+}
+
+.loginTitle,
+.registerTitle {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.formGroup {
+    margin-left: 4rem;
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.formLabel {
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+.formInput {
+    width: 80%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.btnLogin,
+.btnRegister {
+    width: 100%;
+    padding: 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btnLogin:hover,
+.btnRegister:hover {
+    background-color: #218838;
+}
+
+.registerLink,
+.loginLink {
+    margin-top: 15px;
+}
+
+.registerLinkText,
+.loginLinkText {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.registerLinkText:hover,
+.loginLinkText:hover {
+    text-decoration: underline;
+}

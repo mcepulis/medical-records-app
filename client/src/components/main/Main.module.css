@@ -1,0 +1,66 @@
+/* src/pages/Main.module.css */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7rem;
+    padding: 20px;
+}
+
+section {
+    margin: 20px 0;
+}
+
+.img {
+    margin-top: 2rem;
+    width: 8rem;
+    height: 8rem;
+}
+.loginContainer {
+    width: 30rem;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    /* background-color: #f7f7f7; */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    text-align: center;
+}
+
+.loginContainer h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.formGroup {
+    margin-bottom: 30px;
+    text-align: left;
+    margin-left: 4rem;
+}
+
+.formInput {
+    width: 80%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.formGroup label {
+    display: block;
+    margin-bottom: 5px
+}
+
+.registerLink {
+    margin-top: 1rem;
+}
+
+.btnLogin {
+    width: 5rem;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    background-color: #333;
+    color: #fff;
+    cursor: pointer;
+}
