@@ -55,34 +55,29 @@ section {
     box-sizing: border-box;
 }
 
-.btnLogin,
 .btnRegister {
-    width: 100%;
+    width: 7rem;
     padding: 10px;
-    background-color: #28a745;
-    color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
+    background-color: #333;
+    color: #fff;
     cursor: pointer;
 }
 
-.btnLogin:hover,
 .btnRegister:hover {
     background-color: #218838;
 }
 
-.registerLink,
 .loginLink {
     margin-top: 15px;
 }
 
-.registerLinkText,
 .loginLinkText {
     color: #007bff;
     text-decoration: none;
 }
 
-.registerLinkText:hover,
 .loginLinkText:hover {
     text-decoration: underline;
 }

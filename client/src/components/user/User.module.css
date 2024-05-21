@@ -50,6 +50,16 @@ section {
     padding: 20px;
     box-sizing: border-box;
     cursor: pointer; 
+    /* transition: background-color 0.3s, box-shadow 0.3s; */
+}
+
+.recordItem:hover {
+    background-color: #ccc; 
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.recordItem:hover h3 {
+    background-color: #ccc;
 }
 
 .recordItem h3 {

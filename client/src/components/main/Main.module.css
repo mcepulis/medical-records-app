@@ -64,3 +64,7 @@ section {
     color: #fff;
     cursor: pointer;
 }
+
+.btnLogin:hover {
+    background-color: #218838;
+}
