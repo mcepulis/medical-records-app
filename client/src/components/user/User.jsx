@@ -1,15 +1,17 @@
 import style from './User.module.css';
+import { useNavigate } from 'react-router-dom';
 import mainLogo from '../../assets/images/main.webp';
 
 export function User() {
     const medicalRecords = [
-        { id: 1, name: 'Blood Pressure' },
-        { id: 2, name: 'Blood Test' },
-        { id: 3, name: 'Pulse Test' },
+        { id: 1, name: 'Blood Pressure', path: '/blood-pressure' },
+        { id: 2, name: 'Blood Test', path: '/blood-test' },
+        { id: 3, name: 'Visits', path: '/visits' },
     ];
 
-    const handleClick = (recordId) => {
-        console.log('Clicked on record with ID:', recordId);
+    const navigate = useNavigate();
+    const handleClick = (path) => {
+       navigate(path);
     };
 
     return (
@@ -21,7 +23,7 @@ export function User() {
                 <h2 className={style.title}>Medical Records</h2>
                 <div className={style.recordContainer}>
                     {medicalRecords.map(record => (
-                        <div key={record.id} className={style.recordItem} onClick={() => handleClick(record.id)}>
+                        <div key={record.id} className={style.recordItem} onClick={() => handleClick(record.path)}>
                             <h3>{record.name}</h3>
                         </div>
                     ))}

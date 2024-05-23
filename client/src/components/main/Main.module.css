@@ -63,6 +63,7 @@ section {
     background-color: #333;
     color: #fff;
     cursor: pointer;
+    margin-left: 9rem;
 }
 
 .btnLogin:hover {

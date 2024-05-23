@@ -1,9 +1,10 @@
 import React from "react";
+import { BloodPressure } from "../../components/recordType/bloodPressure/BloodPressure";
 
 export function BloodPressurePage() {
     return (
         <div>
-            <h1>BloodPressure Page</h1>
+            <BloodPressure />
         </div>
     )
 }

@@ -1,4 +1,3 @@
-/* src/pages/User.module.css */
 .userPage {
     display: flex;
     flex-direction: column;
@@ -39,7 +38,6 @@ section {
 .recordItem {
     width: 200px;
     height: 200px;
-    /* background-color: #f7f7f7; */
     border: 1px solid #ccc;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -50,7 +48,6 @@ section {
     padding: 20px;
     box-sizing: border-box;
     cursor: pointer; 
-    /* transition: background-color 0.3s, box-shadow 0.3s; */
 }
 
 .recordItem:hover {
