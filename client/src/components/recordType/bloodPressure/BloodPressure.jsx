@@ -36,7 +36,7 @@ export function BloodPressure() {
    return (
       <div className={styles.container}>
          <div className={styles.formContainer}>
-            <h2>Enter Blood Pressure</h2>
+            <h2>Enter Blood Pressure Results</h2>
             <form onSubmit={handleSubmit}>
                <div className={styles.formGroup}>
                   <label htmlFor="systolic">Systolic:</label>
@@ -72,7 +72,7 @@ export function BloodPressure() {
             </form>
          </div>
          <div className={styles.resultsContainer}>
-            <h2>Everyday Results</h2>
+            <h2>Data Records</h2>
             <div className={styles.resultsTableWrapper}>
                <table className={styles.resultsTable}>
                   <thead>

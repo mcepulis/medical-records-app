@@ -123,7 +123,7 @@ export function BloodTest() {
                 </form>
             </div>
             <div className={styles.resultsContainer}>
-                <h2>Main Blood Test Records</h2>
+                <h2>Data Records</h2>
                 <div className={styles.resultsTableWrapper}>
                     <table className={styles.resultsTable}>
                         <thead>
