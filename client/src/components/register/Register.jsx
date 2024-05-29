@@ -70,19 +70,19 @@ export function Register() {
                     <form onSubmit={handleSubmit}>
                         <div className={style.formGroup}>
                             <label htmlFor="name" className={style.formLabel}>Name</label>
-                            <input type="text" id="name" name="name" className={style.formInput} onChange={handleName} required />
+                            <input type="text" id="name" value={name} className={style.formInput} onChange={handleName} required />
                         </div>
                         <div className={style.formGroup}>
                             <label htmlFor="email" className={style.formLabel}>Email</label>
-                            <input type="email" id="email" name="email" className={style.formInput} onChange={handleEmail} required />
+                            <input type="email" id="email" value={email} className={style.formInput} onChange={handleEmail} required />
                         </div>
                         <div className={style.formGroup}>
                             <label htmlFor="password" className={style.formLabel}>Password</label>
-                            <input type="password" id="password" name="password" className={style.formInput} onChange={handlePassword} required />
+                            <input type="password" id="password" value={password} className={style.formInput} onChange={handlePassword} required />
                         </div>
                         <div className={style.formGroup}>
                             <label htmlFor="repeatPassword" className={style.formLabel}>Repeat Password</label>
-                            <input type="password" id="repeatPassword" name="repeatPassword" className={style.formInput} onChange={handleRepeatPassword} required />
+                            <input type="password" id="repeatPassword" value={repeatPassword} className={style.formInput} onChange={handleRepeatPassword} required />
                         </div>
                         <button type="submit" className={style.btnRegister}>Register</button>
                     </form>
