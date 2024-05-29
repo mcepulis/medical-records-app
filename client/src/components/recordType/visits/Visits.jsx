@@ -1,13 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from './Visits.module.css';
 
 export function Visits() {
-    const [visitDateTime, setVisitDateTime] = useState("");
-    const [medicalInstitution, setMedicalInstitution] = useState("");
+    const [data, setData] = useState([]);
+    const [visit_time, setVisitDateTime] = useState("");
+    const [institution, setMedicalInstitution] = useState("");
     const [cabinet, setCabinet] = useState("");
     const [doctor, setDoctor] = useState("");
-    const [medicalSpecialty, setMedicalSpecialty] = useState("");
-    const [visits, setVisits] = useState([]);
+    const [specialty, setMedicalSpecialty] = useState("");
+    const [error, setError] = useState("");
+
+useEffect (() => {
+    const fetchData = async () => {
+        try {
+        const res = await fetch('http://localhost:3555/data/visits');
+        const data = await res.json();
+        setData(data);
+        } catch (err) {
+            setError(err.message);
+        }
+    };
+    fetchData();
+   }, [visit_time]);
+
 
     const handleVisitDateTimeChange = (e) => {
         setVisitDateTime(e.target.value);
@@ -29,22 +44,35 @@ export function Visits() {
         setMedicalSpecialty(e.target.value);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const newVisit = {
-            visitDateTime,
-            medicalInstitution,
-            cabinet,
-            doctor,
-            medicalSpecialty,
-            date: new Date().toLocaleString()
-        };
-        setVisits([...visits, newVisit]);
+       try {
+        const user_id = 1
+        const res = await fetch('http://localhost:3555/data/visits/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                user_id,
+                visit_time,
+                institution,
+                cabinet,
+                doctor,
+                specialty
+            })
+        });
+        if (!res.ok) {
+            throw new Error('Failed to submit data');
+          }
         setVisitDateTime("");
         setMedicalInstitution("");
         setCabinet("");
         setDoctor("");
         setMedicalSpecialty("");
+    } catch (err) {
+        setError(err.message);
+    }
     };
 
     return (
@@ -56,8 +84,8 @@ export function Visits() {
                         <label htmlFor="visitDateTime">Visit Date-Time:</label>
                         <input
                             type="datetime-local"
-                            id="visitDateTime"
-                            value={visitDateTime}
+                            id="visit_time"
+                            value={visit_time}
                             onChange={handleVisitDateTimeChange}
                             required
                         />
@@ -66,8 +94,8 @@ export function Visits() {
                         <label htmlFor="medicalInstitution">Medical Institution:</label>
                         <input
                             type="text"
-                            id="medicalInstitution"
-                            value={medicalInstitution}
+                            id="institution"
+                            value={institution}
                             onChange={handleMedicalInstitutionChange}
                             required
                         />
@@ -96,8 +124,8 @@ export function Visits() {
                         <label htmlFor="medicalSpecialty">Medical Specialty:</label>
                         <input
                             type="text"
-                            id="medicalSpecialty"
-                            value={medicalSpecialty}
+                            id="specialty"
+                            value={specialty}
                             onChange={handleMedicalSpecialtyChange}
                             required
                         />
@@ -120,14 +148,14 @@ export function Visits() {
                             </tr>
                         </thead>
                         <tbody>
-                            {visits.map((visit, index) => (
+                            {data.map((visit, index) => (
                                 <tr key={index}>
-                                    <td>{visit.visitDateTime}</td>
-                                    <td>{visit.medicalInstitution}</td>
+                                    <td>{visit.visit_time}</td>
+                                    <td>{visit.institution}</td>
                                     <td>{visit.cabinet}</td>
                                     <td>{visit.doctor}</td>
-                                    <td>{visit.medicalSpecialty}</td>
-                                    <td>{visit.date}</td>
+                                    <td>{visit.specialty}</td>
+                                    <td>{visit.created_on}</td>
                                 </tr>
                             ))}
                         </tbody>

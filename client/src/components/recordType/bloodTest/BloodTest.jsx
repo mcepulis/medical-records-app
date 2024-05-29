@@ -1,14 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from './BloodTest.module.css';
 
 export function BloodTest() {
+    const [data, setData] = useState([]);
     const [hemoglobin, setHemoglobin] = useState("");
-    const [whiteBloodCells, setWhiteBloodCells] = useState("");
+    const [white_blood_cells, setWhiteBloodCells] = useState("");
     const [platelets, setPlatelets] = useState("");
     const [hematocrit, setHematocrit] = useState("");
     const [glucose, setGlucose] = useState("");
     const [cholesterol, setCholesterol] = useState("");
-    const [tests, setTests] = useState([]);
+    const [error, setError] = useState(null);
+
+    useEffect (() => {
+    const fetchData = async () => {
+       try {
+        const res = await fetch("http://localhost:3555/data/blood-test");
+        const data = await res.json();
+        setData(data);
+     } catch (err) {
+        setError(err.message);
+     }
+    }
+    fetchData();
+}, [glucose]);
 
     const handleHemoglobinChange = (e) => {
         setHemoglobin(e.target.value);
@@ -34,25 +48,38 @@ export function BloodTest() {
         setCholesterol(e.target.value);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const newTest = {
-            hemoglobin,
-            whiteBloodCells,
-            platelets,
-            hematocrit,
-            glucose,
-            cholesterol,
-            date: new Date().toLocaleString()
-        };
-        setTests([...tests, newTest]);
+        try {
+            const user_id = 1;
+            const res = await fetch("http://localhost:3555/data/blood-test/add", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    user_id,
+                    hemoglobin,
+                    white_blood_cells,
+                    platelets,
+                    hematocrit,
+                    glucose,
+                    cholesterol,
+                    date: new Date().toLocaleString()
+                })
+            });
+      if (!res.ok) {
+        throw new Error('Failed to submit data');
+      }
         setHemoglobin("");
         setWhiteBloodCells("");
         setPlatelets("");
         setHematocrit("");
         setGlucose("");
         setCholesterol("");
-    };
+        } catch (err) {
+            setError(err.message);
+        }
+    }
+    
 
     return (
         <div className={styles.container}>
@@ -73,8 +100,8 @@ export function BloodTest() {
                         <label htmlFor="whiteBloodCells">White Blood Cells:</label>
                         <input
                             type="text"
-                            id="whiteBloodCells"
-                            value={whiteBloodCells}
+                            id="white_blood_cells"
+                            value={white_blood_cells}
                             onChange={handleWhiteBloodCellsChange}
                             required
                         />
@@ -138,15 +165,15 @@ export function BloodTest() {
                             </tr>
                         </thead>
                         <tbody>
-                            {tests.map((test, index) => (
+                            {data.map((test, index) => (
                                 <tr key={index}>
                                     <td>{test.hemoglobin}</td>
-                                    <td>{test.whiteBloodCells}</td>
+                                    <td>{test.white_blood_cells}</td>
                                     <td>{test.platelets}</td>
                                     <td>{test.hematocrit}</td>
                                     <td>{test.glucose}</td>
                                     <td>{test.cholesterol}</td>
-                                    <td>{test.date}</td>
+                                    <td>{test.created_on}</td>
                                 </tr>
                             ))}
                         </tbody>

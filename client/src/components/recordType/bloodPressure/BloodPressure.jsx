@@ -1,11 +1,25 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from './BloodPressure.module.css';
 
 export function BloodPressure() {
+   const [data, setData] = useState([]);
    const [systolic, setSystolic] = useState("");
    const [diastolic, setDiastolic] = useState("");
    const [pulse, setPulse] = useState("");
-   const [readings, setReadings] = useState([]);
+   const [error, setError] = useState("");
+
+   useEffect(() => {
+      const fetchData = async () => {
+         try {
+            const res = await fetch('http://localhost:3555/data/blood-pressure');
+            const data = await res.json();
+            setData(data);
+         } catch (err) {
+            setError(err.message);
+         }
+      };
+      fetchData(); 
+   }, [systolic]);
 
    const handleSystolic = (e) => {
       setSystolic(e.target.value);
@@ -19,24 +33,39 @@ export function BloodPressure() {
       setPulse(e.target.value);
    }
 
-   const handleSubmit = (e) => {
-     e.preventDefault();
-     const newReading = {
-        systolic,
-        diastolic,
-        pulse,
-        date: new Date().toLocaleString()
-     };
-     setReadings([...readings, newReading]);
-     setSystolic("");
-     setDiastolic("");
-     setPulse("");
-   }
-
+   const handleSubmit = async (e) => {
+      e.preventDefault();
+      try {
+         const user_id = 1; 
+         const res = await fetch('http://localhost:3555/data/blood-pressure/add', {
+            method: 'POST',
+            headers: {
+               'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+               user_id,
+               systolic,
+               diastolic,
+               pulse,
+               date: new Date().toLocaleString()
+            })
+         });
+         if (!res.ok) {
+            throw new Error('Failed to submit data');
+         }
+         setSystolic('');
+         setDiastolic('');
+         setPulse('');
+      } catch (err) {
+         setError(err.message);
+      }
+   };
+   
    return (
       <div className={styles.container}>
          <div className={styles.formContainer}>
             <h2>Enter Blood Pressure Results</h2>
+            {error && <p>Error: {error}</p>}
             <form onSubmit={handleSubmit}>
                <div className={styles.formGroup}>
                   <label htmlFor="systolic">Systolic:</label>
@@ -84,9 +113,9 @@ export function BloodPressure() {
                      </tr>
                   </thead>
                   <tbody>
-                     {readings.map((reading, index) => (
+                     {data.map((reading, index) => (
                         <tr key={index}>
-                           <td>{reading.date}</td>
+                           <td>{reading.created_on}</td>
                            <td>{reading.systolic}</td>
                            <td>{reading.diastolic}</td>
                            <td>{reading.pulse}</td>
