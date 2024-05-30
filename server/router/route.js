@@ -1,5 +1,6 @@
 import express from 'express';
 
+import { login } from '../controllers/user-controller.js';
 import { allUsers } from '../controllers/user-controller.js';
 import { User } from '../controllers/user-controller.js';
 import { addUser } from '../controllers/user-controller.js';
@@ -28,6 +29,7 @@ import { deleteVisit} from '../controllers/data-visits.js';
 const router = express.Router();
 
 //USERS
+router.post('/login', login);
 router.get('/users', allUsers);
 router.get('/users/:id', User);
 router.post('/users/add', addUser);

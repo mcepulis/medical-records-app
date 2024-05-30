@@ -76,3 +76,43 @@ export async function deleteUser(req, res) {
     res.status(500).json({ error: "Internal server error" });
   }
 }
+
+export async function login (req, res) {
+    const data = req.body;
+    const {email, password} = data;
+    const connection = await dbase();
+
+    let loginObj = null;
+
+    try {
+        const selectQuery = `SELECT * FROM users WHERE email = ? AND password = ?;`;
+        const dbResponse = await connection.execute(selectQuery, [email, password]);
+
+        if (dbResponse[0].length === 0) {
+            return res.send(JSON.stringify({
+                message: 'Such user does not exist',
+                loggedIn: false,
+            }));
+        } else if (dbResponse[0].length === 1) {
+            const loginObj = dbResponse[0][0];
+            console.log(loginObj);
+            return res.send(JSON.stringify({
+                message: 'Login successful',
+                loggedIn: true,
+                user: loginObj 
+            }));
+        } else { res.send(JSON.stringify({
+                message: 'Such user does not exist',
+                loggedIn: false,
+                }));
+        }
+
+    } catch (error) {
+        console.error(error);
+
+        return res.send(JSON.stringify({
+            message: 'Could not find user',
+            loggedIn: false,
+        }));
+    }
+}
