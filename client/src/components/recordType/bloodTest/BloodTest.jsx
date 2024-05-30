@@ -9,6 +9,7 @@ export function BloodTest() {
     const [hematocrit, setHematocrit] = useState("");
     const [glucose, setGlucose] = useState("");
     const [cholesterol, setCholesterol] = useState("");
+    const [editId, setEditId] = useState(null);
     const [error, setError] = useState(null);
 
     useEffect (() => {
@@ -48,39 +49,88 @@ export function BloodTest() {
         setCholesterol(e.target.value);
     };
 
+    const handleEdit = (id) => {
+        const item = data.find(reading => reading.id === id);
+        if (item) {
+            setHemoglobin(item.hemoglobin);
+            setWhiteBloodCells(item.white_blood_cells);
+            setPlatelets(item.platelets);
+            setHematocrit(item.hematocrit);
+            setGlucose(item.glucose);
+            setCholesterol(item.cholesterol);
+            setEditId(id);
+        }
+    }
+
+    const handleDelete = async (id) => {
+        try {
+            const res = await fetch(`http://localhost:3555/data/blood-test/delete/` + id, {
+                method: 'DELETE'
+            });
+            if (res.ok) {
+                setData(data.filter(reading => reading.id !== id));
+            } else {
+                const errorData = await res.json();
+                throw new Error(errorData.error || 'Failed to delete item');
+            }
+        } catch (err) {
+            console.error(err.message);
+            setError(err.message);
+        }
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             const user_id = 1;
+            const body = {
+                user_id,
+                hemoglobin,
+                white_blood_cells,
+                platelets,
+                hematocrit,
+                glucose,
+                cholesterol,
+                date: new Date().toLocaleString()
+            };
+
+            let res;
+            if (editId !== null) {
+                res = await fetch(`http://localhost:3555/data/blood-test/edit/` + editId, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                });
+                if (!res.ok) {
+                    throw new Error('Failed to submit data');
+            }
+            setEditId(null);
+          } else {
             const res = await fetch("http://localhost:3555/data/blood-test/add", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    user_id,
-                    hemoglobin,
-                    white_blood_cells,
-                    platelets,
-                    hematocrit,
-                    glucose,
-                    cholesterol,
-                    date: new Date().toLocaleString()
-                })
+                body: JSON.stringify(body),
             });
-      if (!res.ok) {
-        throw new Error('Failed to submit data');
-      }
-        setHemoglobin("");
-        setWhiteBloodCells("");
-        setPlatelets("");
-        setHematocrit("");
-        setGlucose("");
-        setCholesterol("");
+                if (!res.ok) {
+                    throw new Error('Failed to submit data');
+                }
+            }
+            const updatedRes = await fetch('http://localhost:3555/data/blood-test');
+            const updatedData = await updatedRes.json();
+            setData(updatedData);
+            setHemoglobin('');
+            setWhiteBloodCells('');
+            setPlatelets('');
+            setHematocrit('');
+            setGlucose('');
+            setCholesterol('');
         } catch (err) {
             setError(err.message);
         }
     }
     
-
     return (
         <div className={styles.container}>
             <div className={styles.formContainer}>
@@ -165,15 +215,19 @@ export function BloodTest() {
                             </tr>
                         </thead>
                         <tbody>
-                            {data.map((test, index) => (
-                                <tr key={index}>
-                                    <td>{test.hemoglobin}</td>
-                                    <td>{test.white_blood_cells}</td>
-                                    <td>{test.platelets}</td>
-                                    <td>{test.hematocrit}</td>
-                                    <td>{test.glucose}</td>
-                                    <td>{test.cholesterol}</td>
-                                    <td>{test.created_on}</td>
+                            {data.map((reading) => (
+                                <tr key={reading.id}>
+                                    <td>{reading.hemoglobin}</td>
+                                    <td>{reading.white_blood_cells}</td>
+                                    <td>{reading.platelets}</td>
+                                    <td>{reading.hematocrit}</td>
+                                    <td>{reading.glucose}</td>
+                                    <td>{reading.cholesterol}</td>
+                                    <td>{new Date(reading.created_on).toLocaleString('en-US')}</td>
+                                    <td>
+                                        <button onClick={() => handleEdit(reading.id)}>✎</button>
+                                        <button onClick={() => handleDelete(reading.id)}>🗑</button>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>

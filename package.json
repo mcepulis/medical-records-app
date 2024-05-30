@@ -14,6 +14,7 @@
   "license": "MIT",
   "dependencies": {
     "mysql2": "^3.9.8",
-    "npm-run-all": "^4.1.5"
+    "npm-run-all": "^4.1.5",
+    "react-router-dom": "^6.23.1"
   }
 }

@@ -1,15 +1,18 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import style from './Register.module.css';
 import { Link } from 'react-router-dom';
 import mainLogo from '../../assets/images/main.webp';
 
 export function Register() {
+    const navigate = useNavigate();
     // const [data, setData] = useState([]);
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [repeatPassword, setRepeatPassword] = useState("");
     const [error, setError] = useState(false);
+    const [success, setSuccess] = useState(false);
 
     const handleName = (e) => {
         setName(e.target.value);
@@ -50,8 +53,11 @@ export function Register() {
                 setEmail("");
                 setPassword("");
                 setRepeatPassword("");
-                console.log("successfully registered");
                 setError(false);
+                setSuccess(true);
+                setTimeout(() => {
+                    navigate('/');
+                }, 3000);
             }
         } catch (err) {
             setError(err.message);
@@ -86,6 +92,8 @@ export function Register() {
                         </div>
                         <button type="submit" className={style.btnRegister}>Register</button>
                     </form>
+                    {success && <p>Successfully registered</p>}
+                    {error && <p>Something went wrong</p>}
                     <p className={style.loginLink}>
                         <Link to="/" className={style.loginLinkText}>Already have an account? Sign in</Link>
                     </p>
