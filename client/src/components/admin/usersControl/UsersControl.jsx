@@ -44,6 +44,7 @@ export function UsersPage() {
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Created</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
