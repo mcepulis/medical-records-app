@@ -76,3 +76,19 @@ export async function deletePressure(req, res) {
   res.status(500).json({ error: "Internal server error" });
   }
 }
+
+export async function userPressure(req, res) {
+  try {
+      const connection = await dbase();
+      const { userId } = req.params;
+      const sql = `SELECT * FROM blood_pressure WHERE user_id = ?`;
+      const data = [userId];
+      const [rows] = await connection.query(sql, data);
+      console.log(rows);
+      res.status(200).json(rows);
+      await connection.end(); 
+  } catch (error) {
+  console.error(error);
+  res.status(500).json({ error: "Internal server error" });
+  }
+}

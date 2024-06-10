@@ -174,8 +174,8 @@ export function BloodPressure() {
                                     <td>{reading.diastolic}</td>
                                     <td>{reading.pulse}</td>
                                     <td>
-                                       <button onClick={() => handleEdit(reading.id)}>✎</button>
-                                       <button onClick={() => handleDelete(reading.id)}>🗑</button>
+                                       <button onClick={() => handleEdit(reading.id)}>&nbsp;✎&nbsp;</button>
+                                       <button onClick={() => handleDelete(reading.id)}>&nbsp;&nbsp;🗑&nbsp;</button>
                                     </td>
                               </tr>
                            ))}

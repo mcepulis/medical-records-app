@@ -12,6 +12,7 @@ import { PressureTest } from '../controllers/data-blood-pressure.js';
 import { addPressure } from '../controllers/data-blood-pressure.js';
 import { editPressure } from '../controllers/data-blood-pressure.js';
 import { deletePressure } from '../controllers/data-blood-pressure.js';
+import { userPressure } from '../controllers/data-blood-pressure.js';
 
 import { allBloodTests } from '../controllers/data-blood-test.js';
 import { BloodTest } from '../controllers/data-blood-test.js';
@@ -42,6 +43,7 @@ router.get('/data/blood-pressure/:id', PressureTest);
 router.post('/data/blood-pressure/add', addPressure);
 router.put('/data/blood-pressure/edit/:id', editPressure);
 router.delete('/data/blood-pressure/delete/:id', deletePressure);
+router.get('/data/blood-pressure/:userId', userPressure);
 
 //BLOOD TEST
 router.get('/data/blood-test', allBloodTests);

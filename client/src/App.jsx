@@ -6,6 +6,7 @@ import { UserPage } from "./pages/UserPage.jsx";
 import { BloodPressurePage } from "./pages/recordType/BloodPressurePage.jsx";
 import { BloodTestPage } from "./pages/recordType/BloodTestPage.jsx";
 import { VisitsPage } from "./pages/recordType/VisitsPage.jsx";
+import { AdminPage } from "./pages/AdminPage.jsx";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="blood-pressure" element={<BloodPressurePage />} />
         <Route path="blood-test" element={<BloodTestPage />} />
         <Route path="visits" element={<VisitsPage />} />
+        <Route path="users" element={<AdminPage />} />
     </Routes>
   </BrowserRouter>
   )
