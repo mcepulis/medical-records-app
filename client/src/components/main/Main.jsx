@@ -32,6 +32,8 @@ export function Main() {
             const data = await response.json();
             console.log(data);
             if (data.loggedIn) { 
+                localStorage.setItem('loggedIn', true);
+                localStorage.setItem('userId', data.user.id);
                 navigate('/user'); 
             }
         } catch (err) {

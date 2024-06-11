@@ -32,6 +32,7 @@ export async function addPressure(req, res) {
   try {
       const connection = await dbase();
       const { user_id, systolic, diastolic, pulse } = req.body;
+      console.log('Received userId:', user_id);
       const sql = `INSERT INTO blood_pressure (user_id, systolic, diastolic, pulse) VALUES (?, ?, ?, ?)`;
       const data = [user_id, systolic, diastolic, pulse];
       const [rows] = await connection.query(sql, data);

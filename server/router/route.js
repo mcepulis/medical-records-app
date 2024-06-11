@@ -39,7 +39,7 @@ router.delete('/users/delete/:id', deleteUser);
 
 //BLOOD PRESSURE
 router.get('/data/blood-pressure', allPressureTests);
-router.get('/data/blood-pressure/:id', PressureTest);
+// router.get('/data/blood-pressure/:id', PressureTest);
 router.post('/data/blood-pressure/add', addPressure);
 router.put('/data/blood-pressure/edit/:id', editPressure);
 router.delete('/data/blood-pressure/delete/:id', deletePressure);

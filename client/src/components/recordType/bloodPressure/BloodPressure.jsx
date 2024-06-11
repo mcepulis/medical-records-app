@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useContext, useState, useEffect } from "react";
 import styles from './BloodPressure.module.css';
+import { GlobalContext } from "../../../context/GlobalContext.jsx";
 
 export function BloodPressure() {
-   //  const { id } = useParams();
+    const { userId } = useContext(GlobalContext);
     const [data, setData] = useState([]);
     const [systolic, setSystolic] = useState("");
     const [diastolic, setDiastolic] = useState("");
@@ -11,17 +12,23 @@ export function BloodPressure() {
     const [error, setError] = useState("");
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const res = await fetch('http://localhost:3555/data/blood-pressure');
-                const data = await res.json();
-                setData(data);
-            } catch (err) {
-                setError(err.message);
-            }
-        };
-        fetchData();
-    }, []);
+      const loggedIn = localStorage.getItem('loggedIn');
+      if (!loggedIn) {
+          navigate('/');
+      } else {
+          const userId = localStorage.getItem('userId');
+          const fetchData = async () => {
+              try {
+                  const res = await fetch(`http://localhost:3555/data/blood-pressure/` + userId);
+                  const data = await res.json();
+                  setData(data);
+              } catch (err) {
+                  setError(err.message);
+              }
+          };
+          fetchData();
+      }
+  }, []);
 
     const handleSystolic = (e) => {
         setSystolic(e.target.value);
@@ -64,10 +71,17 @@ export function BloodPressure() {
 
     const handleSubmit = async (e) => {
       e.preventDefault();
+      const loggedIn = localStorage.getItem('loggedIn');
+      const userId = localStorage.getItem('userId');
+  
+      if (!loggedIn || !userId) {
+          console.error('User not logged in or userId is missing');
+          return;
+      }
       try {
-          const user_id = 1;
+         //  const user_id = userId;
           const body = {
-              user_id,
+              user_id: userId,
               systolic,
               diastolic,
               pulse,
@@ -100,7 +114,7 @@ export function BloodPressure() {
               }
           }
 
-          const updatedRes = await fetch('http://localhost:3555/data/blood-pressure');
+          const updatedRes = await fetch(`http://localhost:3555/data/blood-pressure/` + userId);
           const updatedData = await updatedRes.json();
           setData(updatedData);
   
