@@ -26,6 +26,7 @@ import { addVisit } from '../controllers/data-visits.js';
 import { editVisit } from '../controllers/data-visits.js';
 import { deleteVisit} from '../controllers/data-visits.js';
 
+import { cookieTest } from '../controllers/cookie.js';
 
 const router = express.Router();
 
@@ -58,5 +59,8 @@ router.get('/data/visits/:id', Visit);
 router.post('/data/visits/add', addVisit);
 router.put('/data/visits/edit/:id', editVisit);
 router.delete('/data/visits/delete/:id', deleteVisit);
+
+//COOKIE-TEST
+router.get('/cookie-test', cookieTest);
 
 export default router;

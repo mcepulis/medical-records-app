@@ -33,7 +33,6 @@ app.use(cors(corsOptions));
 app.use(helmet(helmetOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(route);
 app.use(cookieParser());
 
 app.use(async (req, res, next) => {
@@ -64,6 +63,7 @@ app.use(async (req, res, next) => {
 
   return next();
 });
+app.use(route);
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
