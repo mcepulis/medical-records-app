@@ -1,4 +1,5 @@
 import { dbase } from '../index.js';
+import { v4 as uuidv4 } from 'uuid'; 
 
 export async function allUsers(req, res) {
     try {
@@ -77,34 +78,38 @@ export async function deleteUser(req, res) {
   }
 }
 
-export async function login (req, res) {
+export async function login(req, res) {
     const data = req.body;
-    const {email, password} = data;
+    const { email, password } = data;
     const connection = await dbase();
 
-    let loginObj = null;
-
     try {
+        const connection = await dbase();
         const selectQuery = `SELECT * FROM users WHERE email = ? AND password = ?;`;
-        const dbResponse = await connection.execute(selectQuery, [email, password]);
+        const [dbResponse] = await connection.execute(selectQuery, [email, password]);
 
-        if (dbResponse[0].length === 0) {
+        if (dbResponse.length === 0) {
             return res.send(JSON.stringify({
                 message: 'Such user does not exist',
                 loggedIn: false,
             }));
-        } else if (dbResponse[0].length === 1) {
-            const loginObj = dbResponse[0][0];
+        } else if (dbResponse.length === 1) {
+            const loginObj = dbResponse[0];
             console.log(loginObj);
+            const token = uuidv4();
+            const insertQuery = `INSERT INTO login_token (user_id, token) VALUES (?, ?)`;
+            await connection.execute(insertQuery, [loginObj.id, token]);
+            res.cookie('login_token', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
             return res.send(JSON.stringify({
                 message: 'Login successful',
                 loggedIn: true,
                 user: loginObj 
             }));
-        } else { res.send(JSON.stringify({
+        } else {
+            res.send(JSON.stringify({
                 message: 'Such user does not exist',
                 loggedIn: false,
-                }));
+            }));
         }
 
     } catch (error) {
@@ -114,5 +119,7 @@ export async function login (req, res) {
             message: 'Could not find user',
             loggedIn: false,
         }));
+    } finally {
+        await connection.end();
     }
 }

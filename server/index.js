@@ -35,6 +35,15 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 
+// Error handling middleware for JSON parsing errors
+app.use((err, req, res, next) => {
+  if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+    console.error('Bad JSON');
+    return res.status(400).send({ message: 'Invalid JSON' });
+  }
+  next();
+});
+
 app.use(async (req, res, next) => {
   const loginToken = req.cookies['login_token'];
   console.log('login_token', loginToken);
@@ -48,6 +57,7 @@ app.use(async (req, res, next) => {
   }
 
   try {
+      const connection = await dbase();
       const selectQuery = `SELECT * FROM login_token WHERE token = ?`;
       const [dbResponse] = await connection.execute(selectQuery, [loginToken]);
 
