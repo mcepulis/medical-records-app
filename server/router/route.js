@@ -8,7 +8,6 @@ import { editUser } from '../controllers/user-controller.js';
 import { deleteUser } from '../controllers/user-controller.js';
 
 import { allPressureTests } from '../controllers/data-blood-pressure.js';
-import { PressureTest } from '../controllers/data-blood-pressure.js';
 import { addPressure } from '../controllers/data-blood-pressure.js';
 import { editPressure } from '../controllers/data-blood-pressure.js';
 import { deletePressure } from '../controllers/data-blood-pressure.js';
@@ -48,19 +47,22 @@ router.get('/data/blood-pressure/:userId', userPressure);
 
 //BLOOD TEST
 router.get('/data/blood-test', allBloodTests);
-router.get('/data/blood-test/:id', BloodTest);
+// router.get('/data/blood-test/:id', BloodTest);
 router.post('/data/blood-test/add', addBloodTest);
 router.put('/data/blood-test/edit/:id', editBloodTest);
 router.delete('/data/blood-test/delete/:id', deleteBloodTest);
+router.get('/data/blood-test/:userId', BloodTest);
 
 //VISITS
 router.get('/data/visits', allVisits);
-router.get('/data/visits/:id', Visit);
+// router.get('/data/visits/:id', Visit);
 router.post('/data/visits/add', addVisit);
 router.put('/data/visits/edit/:id', editVisit);
 router.delete('/data/visits/delete/:id', deleteVisit);
+router.get('/data/visits/:userId', Visit);
 
 //COOKIE-TEST
 router.get('/cookie-test', cookieTest);
 
 export default router;
+

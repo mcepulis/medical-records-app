@@ -29,13 +29,15 @@ export async function dbase() {
   return connection;
 }
 
-app.use(cors(corsOptions));
+app.use(cors({
+  origin: 'http://localhost:3666',
+  credentials: true,
+}));
 app.use(helmet(helmetOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 
-// Error handling middleware for JSON parsing errors
 app.use((err, req, res, next) => {
   if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
     console.error('Bad JSON');
@@ -46,7 +48,6 @@ app.use((err, req, res, next) => {
 
 app.use(async (req, res, next) => {
   const loginToken = req.cookies['login_token'];
-  console.log('login_token', loginToken);
 
   req.user = {
       id: -1,
@@ -66,9 +67,9 @@ app.use(async (req, res, next) => {
       }
 
       const tokenObj = dbResponse[0];
-      req.user.id = tokenObj.userId;
+      req.user.id = tokenObj.user_id;
   } catch (error) {
-      console.error(error);
+      console.error('Error retrieving user from login_token:', error);
   }
 
   return next();

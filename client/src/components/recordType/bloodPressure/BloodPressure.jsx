@@ -1,9 +1,12 @@
+
 import { useContext, useState, useEffect } from "react";
 import styles from './BloodPressure.module.css';
 import { GlobalContext } from "../../../context/GlobalContext.jsx";
+import { useNavigate } from 'react-router-dom';
 
 export function BloodPressure() {
-    const { userId } = useContext(GlobalContext);
+    const navigate = useNavigate();
+    const { loginStatus, userId } = useContext(GlobalContext);
     const [data, setData] = useState([]);
     const [systolic, setSystolic] = useState("");
     const [diastolic, setDiastolic] = useState("");
@@ -12,23 +15,23 @@ export function BloodPressure() {
     const [error, setError] = useState("");
 
     useEffect(() => {
-      const loggedIn = localStorage.getItem('loggedIn');
-      if (!loggedIn) {
-          navigate('/');
-      } else {
-          const userId = localStorage.getItem('userId');
-          const fetchData = async () => {
-              try {
-                  const res = await fetch(`http://localhost:3555/data/blood-pressure/` + userId);
-                  const data = await res.json();
-                  setData(data);
-              } catch (err) {
-                  setError(err.message);
-              }
-          };
-          fetchData();
-      }
-  }, []);
+        if (!loginStatus) {
+            console.log('User not logged in. Redirecting to login...');
+            navigate('/');
+        } else {
+            fetchData();
+        }
+    }, [loginStatus, userId, navigate]);
+
+    const fetchData = async () => {
+        try {
+            const res = await fetch(`http://localhost:3555/data/blood-pressure/` + userId);
+            const data = await res.json();
+            setData(data);
+        } catch (err) {
+            setError(err.message);
+        }
+    };
 
     const handleSystolic = (e) => {
         setSystolic(e.target.value);
@@ -70,61 +73,58 @@ export function BloodPressure() {
     }
 
     const handleSubmit = async (e) => {
-      e.preventDefault();
-      const loggedIn = localStorage.getItem('loggedIn');
-      const userId = localStorage.getItem('userId');
-  
-      if (!loggedIn || !userId) {
-          console.error('User not logged in or userId is missing');
-          return;
-      }
-      try {
-         //  const user_id = userId;
-          const body = {
-              user_id: userId,
-              systolic,
-              diastolic,
-              pulse,
-              date: new Date().toLocaleString()
-          };
-  
-          let res;
-          if (editId !== null) {
-              res = await fetch(`http://localhost:3555/data/blood-pressure/edit/` + editId, {
-                  method: 'PUT',
-                  headers: {
-                      'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify(body)
-              });
-              if (!res.ok) {
-                  throw new Error('Failed to update data');
-              }
-              setEditId(null);
-          } else {
-              res = await fetch('http://localhost:3555/data/blood-pressure/add', {
-                  method: 'POST',
-                  headers: {
-                      'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify(body)
-              });
-              if (!res.ok) {
-                  throw new Error('Failed to submit data');
-              }
-          }
+        e.preventDefault();
 
-          const updatedRes = await fetch(`http://localhost:3555/data/blood-pressure/` + userId);
-          const updatedData = await updatedRes.json();
-          setData(updatedData);
-  
-          setSystolic('');
-          setDiastolic('');
-          setPulse('');
-      } catch (err) {
-          setError(err.message);
-      }
-  };
+        if (!loginStatus || !userId) {
+            console.error('User not logged in or userId is missing');
+            return;
+        }
+        try {
+            const body = {
+                user_id: userId,
+                systolic,
+                diastolic,
+                pulse,
+                date: new Date().toLocaleString()
+            };
+
+            let res;
+            if (editId !== null) {
+                res = await fetch(`http://localhost:3555/data/blood-pressure/edit/` + editId, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                });
+                if (!res.ok) {
+                    throw new Error('Failed to update data');
+                }
+                setEditId(null);
+            } else {
+                res = await fetch('http://localhost:3555/data/blood-pressure/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                });
+                if (!res.ok) {
+                    throw new Error('Failed to submit data');
+                }
+            }
+
+            const updatedRes = await fetch(`http://localhost:3555/data/blood-pressure/` + userId);
+            const updatedData = await updatedRes.json();
+            setData(updatedData);
+
+            setSystolic('');
+            setDiastolic('');
+            setPulse('');
+        } catch (err) {
+            setError(err.message);
+        }
+    };
 
     return (
         <div className={styles.container}>
@@ -181,18 +181,18 @@ export function BloodPressure() {
                             </tr>
                         </thead>
                         <tbody>
-                           {data.map((reading) => (
-                              <tr key={reading.id}>
+                            {data.map((reading) => (
+                                <tr key={reading.id}>
                                     <td>{new Date(reading.created_on).toLocaleString('en-US')}</td>
                                     <td>{reading.systolic}</td>
                                     <td>{reading.diastolic}</td>
                                     <td>{reading.pulse}</td>
                                     <td>
-                                       <button onClick={() => handleEdit(reading.id)}>&nbsp;✎&nbsp;</button>
-                                       <button onClick={() => handleDelete(reading.id)}>&nbsp;&nbsp;🗑&nbsp;</button>
+                                        <button onClick={() => handleEdit(reading.id)}>&nbsp;✎&nbsp;</button>
+                                        <button onClick={() => handleDelete(reading.id)}>&nbsp;&nbsp;🗑&nbsp;</button>
                                     </td>
-                              </tr>
-                           ))}
+                                </tr>
+                            ))}
                         </tbody>
                     </table>
                 </div>

@@ -7,9 +7,11 @@ import { BloodPressurePage } from "./pages/recordType/BloodPressurePage.jsx";
 import { BloodTestPage } from "./pages/recordType/BloodTestPage.jsx";
 import { VisitsPage } from "./pages/recordType/VisitsPage.jsx";
 import { AdminPage } from "./pages/AdminPage.jsx";
+import { ContextWrapper } from './context/GlobalContext.jsx';
 
 function App() {
   return (
+    <ContextWrapper>
     <BrowserRouter>
     <Routes>
         <Route path="/" element={<MainPage />} />
@@ -21,6 +23,7 @@ function App() {
         <Route path="users" element={<AdminPage />} />
     </Routes>
   </BrowserRouter>
+  </ContextWrapper>
   )
 }
 

@@ -1,20 +1,24 @@
-import { useState, useEffect } from "react";
+import { useState, useContext } from "react";
 import style from './Main.module.css';
 import { Link, useNavigate } from 'react-router-dom';
 import mainLogo from '../../assets/images/main.webp';
+import Cookies from 'js-cookie';
+import { GlobalContext } from '../../context/GlobalContext.jsx';
+import { v4 as uuidv4 } from 'uuid';
 
 export function Main() {
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const { updateLoginStatus, updateUserId } = useContext(GlobalContext);
 
     const handleEmail = (e) => {
         setEmail(e.target.value);
-    }
+    };
 
     const handlePassword = (e) => {
         setPassword(e.target.value);
-    }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -26,20 +30,28 @@ export function Main() {
                 },
                 body: JSON.stringify({
                     email,
-                    password
+                    password,
+                    token: uuidv4()
                 })
             });
             const data = await response.json();
-            console.log(data);
-            if (data.loggedIn) { 
-                localStorage.setItem('loggedIn', true);
-                localStorage.setItem('userId', data.user.id);
-                navigate('/user'); 
+            console.log(data); 
+
+            if (data.loggedIn) {
+                updateLoginStatus(true);
+                updateUserId(data.user.id);
+                console.log('Context updated with:', { loggedIn: true, userId: data.user.id });
+                Cookies.set('loggedIn', 'true');
+                Cookies.set('userId', data.user.id);
+                Cookies.set('loginToken', data.token);
+                navigate('/user');
+            } else {
+                console.error('Login failed:', data.message); 
             }
         } catch (err) {
-            setError(err.message);
+            console.error('Error logging in:', err);
         }
-    }
+    };
 
     return (
         <div className={style.container}>

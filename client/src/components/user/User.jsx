@@ -1,16 +1,19 @@
 import style from './User.module.css';
-import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useContext } from 'react';
 import mainLogo from '../../assets/images/main.webp';
+import { GlobalContext } from '../../context/GlobalContext.jsx';
+import { useNavigate } from 'react-router-dom';
 
 export function User() {
     const navigate = useNavigate();
+    const { loginStatus } = useContext(GlobalContext);
+
     useEffect(() => {
-        const loggedIn = localStorage.getItem('loggedIn');
-        if (!loggedIn) {
+        if (!loginStatus) {
+            console.log('User not logged in. Redirecting to login...');
             navigate('/');
         }
-    }, []);
+    }, [loginStatus, navigate]);
 
     const medicalRecords = [
         { id: 1, name: 'Blood Pressure', path: '/blood-pressure' },
@@ -19,28 +22,11 @@ export function User() {
     ];
 
     const handleClick = (path) => {
-       navigate(path);
+        navigate(path);
     };
-
-//     const [data, setData] = useState([]);
-
-//     useEffect(() => {
-//        const fetchData = async () => {
-//            try {
-//                const res = await fetch('http://localhost:3555/users');
-//                const data = await res.json();
-//                setData(data);
-//            } catch (err) {
-//                setError(err.message);
-//            }
-//        };
-//        fetchData();
-//    }, []);
-
 
     return (
         <div className={style.userPage}>
-            {/* <h1>Sveiki `${data.name}`</h1> */}
             <section>
                 <img className={style.img} src={mainLogo} alt="Main Logo" />
             </section>

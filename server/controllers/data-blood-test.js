@@ -13,21 +13,6 @@ export async function allBloodTests(req, res) {
   }
 }
 
-export async function BloodTest(req, res) {
-  try {
-      const connection = await dbase();
-      const { id } = req.params;
-      const sql = `SELECT * FROM blood_test WHERE ID = ?`;
-      const [rows] = await connection.query(sql, [id]);
-      console.log(rows);
-      res.status(200).json(rows);
-      connection.close();
-  } catch (error) {
-  console.error(error);
-  res.status(500).json({ error: "Internal server error" });
-  }
-}
-
 export async function addBloodTest(req, res) {
   try {
       const connection = await dbase();
@@ -71,6 +56,22 @@ export async function deleteBloodTest(req, res) {
       console.log(rows);
       res.status(200).json(rows);
       await connection.end(); 
+  } catch (error) {
+  console.error(error);
+  res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+export async function BloodTest(req, res) {
+  try {
+      const connection = await dbase();
+      const { userId } = req.params;
+      const sql = `SELECT * FROM blood_test WHERE user_id = ?`;
+      const data = [userId];
+      const [rows] = await connection.query(sql, data);
+      console.log(rows);
+      res.status(200).json(rows);
+      connection.close();
   } catch (error) {
   console.error(error);
   res.status(500).json({ error: "Internal server error" });

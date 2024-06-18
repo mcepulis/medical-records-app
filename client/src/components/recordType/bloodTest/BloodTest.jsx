@@ -1,7 +1,11 @@
-import { useState, useEffect } from "react";
+import { useContext, useState, useEffect } from "react";
 import styles from './BloodTest.module.css';
+import { GlobalContext } from "../../../context/GlobalContext.jsx";
+import { useNavigate } from 'react-router-dom';
 
 export function BloodTest() {
+    const navigate = useNavigate();
+    const { loginStatus, userId } = useContext(GlobalContext);
     const [data, setData] = useState([]);
     const [hemoglobin, setHemoglobin] = useState("");
     const [white_blood_cells, setWhiteBloodCells] = useState("");
@@ -12,18 +16,25 @@ export function BloodTest() {
     const [editId, setEditId] = useState(null);
     const [error, setError] = useState(null);
 
-    useEffect (() => {
+
+    useEffect(() => {
+        if (!loginStatus) {
+            console.log('User not logged in. Redirecting to login...');
+            navigate('/');
+        } else {
+            fetchData();
+        }
+    }, [loginStatus, userId, navigate]);
+
     const fetchData = async () => {
        try {
-        const res = await fetch("http://localhost:3555/data/blood-test");
+        const res = await fetch(`http://localhost:3555/data/blood-test/${userId}`);
         const data = await res.json();
         setData(data);
      } catch (err) {
         setError(err.message);
-     }
     }
-    fetchData();
-}, [glucose]);
+}
 
     const handleHemoglobinChange = (e) => {
         setHemoglobin(e.target.value);
@@ -81,10 +92,13 @@ export function BloodTest() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!loginStatus || !userId) {
+            console.error('User not logged in or userId is missing');
+            return;
+        }
         try {
-            const user_id = 1;
             const body = {
-                user_id,
+                user_id: userId,
                 hemoglobin,
                 white_blood_cells,
                 platelets,
@@ -117,7 +131,7 @@ export function BloodTest() {
                     throw new Error('Failed to submit data');
                 }
             }
-            const updatedRes = await fetch('http://localhost:3555/data/blood-test');
+            const updatedRes = await fetch(`http://localhost:3555/data/blood-test/${userId}`);
             const updatedData = await updatedRes.json();
             setData(updatedData);
             setHemoglobin('');

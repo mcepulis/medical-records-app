@@ -79,47 +79,37 @@ export async function deleteUser(req, res) {
 }
 
 export async function login(req, res) {
-    const data = req.body;
-    const { email, password } = data;
-    const connection = await dbase();
+    const { email, password } = req.body;
 
     try {
         const connection = await dbase();
-        const selectQuery = `SELECT * FROM users WHERE email = ? AND password = ?;`;
+        const selectQuery = `SELECT * FROM users WHERE email = ? AND password = ?`;
         const [dbResponse] = await connection.execute(selectQuery, [email, password]);
 
-        if (dbResponse.length === 0) {
-            return res.send(JSON.stringify({
-                message: 'Such user does not exist',
+        if (dbResponse.length !== 1) {
+            return res.status(401).json({
+                message: 'Invalid credentials',
                 loggedIn: false,
-            }));
-        } else if (dbResponse.length === 1) {
-            const loginObj = dbResponse[0];
-            console.log(loginObj);
-            const token = uuidv4();
-            const insertQuery = `INSERT INTO login_token (user_id, token) VALUES (?, ?)`;
-            await connection.execute(insertQuery, [loginObj.id, token]);
-            res.cookie('login_token', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
-            return res.send(JSON.stringify({
-                message: 'Login successful',
-                loggedIn: true,
-                user: loginObj 
-            }));
-        } else {
-            res.send(JSON.stringify({
-                message: 'Such user does not exist',
-                loggedIn: false,
-            }));
+            });
         }
 
-    } catch (error) {
-        console.error(error);
+        const user = dbResponse[0];
+        const token = uuidv4();
+        const insertQuery = `INSERT INTO login_token (user_id, token) VALUES (?, ?)`;
+        await connection.execute(insertQuery, [user.id, token]);
 
-        return res.send(JSON.stringify({
-            message: 'Could not find user',
+        res.cookie('login_token', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
+        return res.json({
+            message: 'Login successful',
+            loggedIn: true,
+            user: user,
+            token: token,
+        });
+    } catch (error) {
+        console.error('Error logging in:', error);
+        res.status(500).json({
+            message: 'Internal server error',
             loggedIn: false,
-        }));
-    } finally {
-        await connection.end();
+        });
     }
 }

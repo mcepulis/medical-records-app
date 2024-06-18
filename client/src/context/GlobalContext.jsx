@@ -1,11 +1,12 @@
-/* eslint-disable react/prop-types */
+
 import { createContext, useEffect, useState } from "react";
+import Cookies from 'js-cookie';
 
 export const initialContext = {
     loginStatus: false,
-    updateLoginStatus: () => { },
+    updateLoginStatus: () => {},
     userId: -1,
-    updateUserId: () => { },
+    updateUserId: () => {},
 };
 
 export const GlobalContext = createContext(initialContext);
@@ -15,35 +16,24 @@ export function ContextWrapper(props) {
     const [userId, setUserId] = useState(initialContext.userId);
 
     useEffect(() => {
-        fetch('http://localhost:3555/login', {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({}),
-        })
-            .then(res => res.json())
-            .then(data => {
-                if (typeof data !== 'undefined') {
-                    updateLoginStatus(data.loggedIn);
-                    updateUserId(data.id);
-                }
-            })
-            .catch(console.error);
+        const loggedIn = Cookies.get('loggedIn') === 'true';
+        const userIdFromCookie = Cookies.get('userId');
+
+        if (loggedIn && userIdFromCookie) {
+            setLoginStatus(true);
+            setUserId(parseInt(userIdFromCookie));
+        }
     }, []);
-    
 
-    function updateLoginStatus(newStatusValue) {
+    const updateLoginStatus = (newStatusValue) => {
         setLoginStatus(newStatusValue);
-    }
+        Cookies.set('loggedIn', newStatusValue, { expires: 7 }); 
+    };
 
-    function updateUserId(id) {
+    const updateUserId = (id) => {
         setUserId(id);
-    }
-
-  
-
+        Cookies.set('userId', id); 
+    };
 
     const value = {
         loginStatus,

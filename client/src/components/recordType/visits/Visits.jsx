@@ -1,7 +1,11 @@
-import { useState, useEffect } from "react";
+import { useContext, useState, useEffect } from "react";
 import styles from './Visits.module.css';
+import { GlobalContext } from "../../../context/GlobalContext.jsx";
+import { useNavigate } from 'react-router-dom';
 
 export function Visits() {
+    const navigate = useNavigate();
+    const { loginStatus, userId } = useContext(GlobalContext);
     const [data, setData] = useState([]);
     const [visit_time, setVisitDateTime] = useState("");
     const [institution, setMedicalInstitution] = useState("");
@@ -11,18 +15,24 @@ export function Visits() {
     const [editId, setEditId] = useState(null);
     const [error, setError] = useState("");
 
-useEffect (() => {
+    useEffect(() => {
+        if (!loginStatus) {
+            console.log('User not logged in. Redirecting to login...');
+            navigate('/');
+        } else {
+            fetchData();
+        }
+    }, [loginStatus, userId, navigate]);
+
     const fetchData = async () => {
         try {
-        const res = await fetch('http://localhost:3555/data/visits');
+        const res = await fetch(`http://localhost:3555/data/visits/${userId}`);
         const data = await res.json();
         setData(data);
         } catch (err) {
             setError(err.message);
         }
-    };
-    fetchData();
-   }, [visit_time]);
+    }
 
 
     const handleVisitDateTimeChange = (e) => {
@@ -81,10 +91,13 @@ useEffect (() => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!loginStatus || !userId) {
+            console.error('User not logged in or userId is missing');
+            return;
+        }
        try {
-        const user_id = 1
         const body = {
-            user_id,
+            user_id: userId,
             visit_time, 
             institution,
             cabinet,
@@ -117,8 +130,9 @@ useEffect (() => {
             throw new Error('Failed to submit data');
           }
         }
-        const updatedRes = await fetch('http://localhost:3555/data/visits');
+        const updatedRes = await fetch(`http://localhost:3555/data/visits/${userId}`);
         const updatedData = await updatedRes.json();
+        setData(updatedData);
         setVisitDateTime("");
         setMedicalInstitution("");
         setCabinet("");
